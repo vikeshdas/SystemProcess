@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div style="text-align: center;"><b>System Processes</b></div>
+
+<div class="wrapper">
+    <div row="">
+        <div id="system-summary" style="margin-top: 30px;">
+            <p>Total CPU Usage: <span id="total-cpu">0%</span></p>
+            <p>Total Memory Usage: <span id="total-memory">0 MB</span></p>
+        </div>
+    </div>
+
+    <div style="margin-top: 50px;">
+        <button style="align-items: center;" id="refresh-btn" class="btn btn-primary mb-3">Refresh</button>
+
+        <div class="mb-3">
+            <input 
+                type="search" 
+                name="Search"
+                id="search-bar" 
+                class="form-control" 
+                placeholder="Search by columns"
+                oninput="filterProcesses()" />
+        </div>
+
+        <div id="loader" style="display: none; text-align: center; margin: 20px;">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th class="sortable" onclick="sortTable(0)">PID <span id="pid-sort-icon" class="sort-icon">↑</span></th>
+                    <th class="sortable" onclick="sortTable(1)">Process Name <span id="name-sort-icon" class="sort-icon">↑</span></th>
+                    <th class="sortable" onclick="sortTable(2)">User <span id="user-sort-icon" class="sort-icon">↑</span></th>
+                    <th class="sortable" onclick="sortTable(3)">CPU Usage (%) <span id="cpu-sort-icon" class="sort-icon">↑</span></th>
+                    <th class="sortable" onclick="sortTable(4)">Memory Usage (MB) <span id="memory-sort-icon" class="sort-icon">↑</span></th>
+                    <th class="sortable" onclick="sortTable(5)">Start Time <span id="start-time-sort-icon" class="sort-icon">↑</span></th>
+                </tr>
+            </thead>
+            <tbody id="process-table-body"></tbody>
+        </table>
+    </div>
+
+<script>
+    let processData = []; 
+    let sortOrder = [true, true, true, true, true, true];
+
+    async function fetchProcesses() {
+        const loader = document.getElementById('loader');
+        const tbody = document.getElementById('process-table-body');
+        const totalCpuElement = document.getElementById('total-cpu');
+        const totalMemoryElement = document.getElementById('total-memory');
+
+        loader.style.display = 'block';
+        tbody.innerHTML = '';
+
+        try {
+            const response = await fetch('/processes');
+            const data = await response.json();
+
+            processData = data.processes;
+
+            const totalCpu = processData.reduce((total, process) => total + parseFloat(process.cpu || 0), 0);
+            const totalMemory = processData.reduce((total, process) => total + parseFloat(process.memory || 0), 0);
+
+            totalCpuElement.textContent = `${totalCpu.toFixed(2)}%`;
+            totalMemoryElement.textContent = `${totalMemory.toFixed(2)} MB`;
+
+            populateTable(processData);
+        } catch (error) {
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">Failed to load data</td></tr>`;
+        } finally {
+            loader.style.display = 'none';
+        }
+    }
+
+    function populateTable(data) {
+        const tbody = document.getElementById('process-table-body');
+        tbody.innerHTML = '';
+        data.forEach(process => {
+            const row = `
+                <tr>
+                    <td>${process.pid}</td>
+                    <td>${process.name}</td>
+                    <td>${process.user}</td>
+                    <td>${process.cpu}</td>
+                    <td>${process.memory}</td>
+                    <td>${process.start_time}</td>
+                </tr>
+            `;
+            tbody.innerHTML += row;
+        });
+    }
+
+    function filterProcesses() {
+        const searchValue = document.getElementById('search-bar').value.toLowerCase();
+        const filteredData = processData.filter(process =>
+            process.name.toLowerCase().includes(searchValue) ||
+            process.pid.toString().includes(searchValue)
+        );
+        populateTable(filteredData);
+    }
+
+    function sortTable(columnIndex) {
+        const rows = Array.from(document.querySelectorAll('#process-table-body tr'));
+        const sortedRows = rows.sort((rowA, rowB) => {
+            const cellA = rowA.cells[columnIndex].innerText;
+            const cellB = rowB.cells[columnIndex].innerText;
+
+            const isNumeric = !isNaN(parseFloat(cellA));
+            if (isNumeric) {
+                return sortOrder[columnIndex]
+                    ? parseFloat(cellA) - parseFloat(cellB)
+                    : parseFloat(cellB) - parseFloat(cellA);
+            }
+
+
+            return sortOrder[columnIndex]
+                ? cellA.localeCompare(cellB)
+                : cellB.localeCompare(cellA);
+        });
+
+        document.getElementById('process-table-body').innerHTML = '';
+        document.getElementById('process-table-body').append(...sortedRows);
+
+        sortOrder[columnIndex] = !sortOrder[columnIndex];
+
+        updateSortIcons(columnIndex);
+    }
+
+    function updateSortIcons(columnIndex) {
+        const icons = document.querySelectorAll('.sort-icon');
+        icons.forEach(icon => {
+            icon.innerHTML = '↑'; 
+        });
+
+        const icon = document.getElementById(getColumnId(columnIndex) + '-sort-icon');
+        if (sortOrder[columnIndex]) {
+            icon.innerHTML = '↑'; 
+        } else {
+            icon.innerHTML = '↓'; 
+        }
+    }
+
+    function getColumnId(columnIndex) {
+        const columnIds = ['pid', 'name', 'user', 'cpu', 'memory', 'start-time'];
+        return columnIds[columnIndex];
+    }
+
+    document.getElementById('refresh-btn').addEventListener('click', fetchProcesses);
+
+    fetchProcesses();
+</script>
+
+<style>
+    .sortable {
+        cursor: pointer; 
+    }
+
+    .sortable:hover {
+        color: #007bff; 
+    }
+
+    #search-bar {
+        width: 20%; 
+        border-radius: 2px;
+    }
+
+    .wrapper {
+        text-align: center;
+    }
+
+    #refresh-btn {
+        float: right;
+    }
+</style>
+
+{% endblock %}

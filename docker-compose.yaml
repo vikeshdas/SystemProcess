@@ -1,0 +1,8 @@
+version: '3'
+
+services:
+  web_service:
+    image: web_image
+    container_name: web_service
+    ports:
+      - "8000:8000"
