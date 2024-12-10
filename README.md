@@ -21,10 +21,10 @@ This application is structured using the Model-View-Template (MVT) architecture 
 
 
 ### Features include
-- Search/Filter: Find specific processes by process ID, Name,User, CPU Usage, Memory Usage,Start Time.
+- Search/Filter: Find specific processes by process ID, Name,User, CPU Usage, Memory Usage,Start Time as you can see in below image.
 <img src="images/img5.png" width="100%" align="top-left" alt="" title="CNN" />
 
-- Sort: User can sort process by process ID,Name, User,CPU Usage,Memory Usage,Start Time .As you can see in the below image we have sort by Name and CPU usage
+- Sort: User can sort process by process ID,Name, User,CPU Usage,Memory Usage,Start Time .As you can see in the below image we have sorted by Name and CPU usage
 
 <img src="images/img4.png" width="100%" align="top-left" alt="" title="CNN" />
 <img src="images/img3.png" width="100%" align="top-left" alt="" title="CNN" />
