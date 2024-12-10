@@ -17,29 +17,38 @@ This application is structured using the Model-View-Template (MVT) architecture 
 - CPU Usage (%)
 - Memory Usage (MB)
 - Start Time
+<img src="images/img1.png" width="100%" align="top-left" alt="" title="CNN" />
+
 
 ### Features include
 - Search/Filter: Find specific processes by process ID, Name,User, CPU Usage, Memory Usage,Start Time.
+<img src="images/img5.png" width="100%" align="top-left" alt="" title="CNN" />
 
-- Sort: User can sort process by process ID,Name, User,CPU Usage,Memory Usage,Start Time .
+- Sort: User can sort process by process ID,Name, User,CPU Usage,Memory Usage,Start Time .As you can see in the below image we have sort by Name and CPU usage
+
+<img src="images/img4.png" width="100%" align="top-left" alt="" title="CNN" />
+<img src="images/img3.png" width="100%" align="top-left" alt="" title="CNN" />
+
+- User can Click on refresh button to fetch new process from system.
+<img src="images/img3.png" width="100%" align="top-left" alt="" title="CNN" />
 
 ## Setup and run the project without docker container
-- git clone https://github.com/vikeshdas/SystemProcess.git
+- `git clone https://github.com/vikeshdas/SystemProcess.git`
 
-- conda create -n env_name python=3.10
+- `conda create -n env_name python=3.10`
 
 - activate conda envirement
 
-- got the directory of the project where requirement.txt file exist and run pip install -r requirements.txt
+- got the directory of the project where requirement.txt file exist and run `pip install -r requirements.txt`
 
 - run command python manage.py runserver
 
 ## Setup and run project in Docker container
 
-- git clone https://github.com/vikeshdas/SystemProcess.git
+- `git clone https://github.com/vikeshdas/SystemProcess.git`
 
 - Open CMD and go to the directory of the project where Dockerfile exist.
 
-- Create docker image from Dockerfile : Run command  docker build -t web_image -f Dockerfile .
+- Create docker image from Dockerfile : Run command  `docker build -t web_image -f Dockerfile .`
 
-- Run command docker compose up web_service to run project in container.
+- Run command `docker compose up web_service` to run project in container.
