@@ -30,6 +30,7 @@ This application is structured using the Model-View-Template (MVT) architecture 
 <img src="images/img3.png" width="100%" align="top-left" alt="" title="CNN" />
 
 - User can Click on refresh button to fetch new process from system.
+<img src="images/img2.png" width="100%" align="top-left" alt="" title="CNN" />
 <img src="images/img1.png" width="100%" align="top-left" alt="" title="CNN" />
 
 ## Setup and run the project without docker container
